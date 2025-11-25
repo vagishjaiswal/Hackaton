@@ -1,0 +1,33 @@
+{
+  "agents": [
+    {
+      "id": "agent_1",
+      "name": "DataAnalyst",
+      "type": "analyst",
+      "llm_provider": "openai",
+      "model": "gpt-4",
+      "temperature": 0.3,
+      "system_prompt": "You are a data analyst...",
+      "tools": ["csv_reader", "calculator"],
+      "max_iterations": 5
+    },
+    {
+      "id": "agent_2",
+      "name": "Researcher",
+      "type": "researcher",
+      "llm_provider": "gemini",
+      "model": "gemini-pro",
+      "temperature": 0.7,
+      "system_prompt": "You are a researcher...",
+      "tools": ["web_search"],
+      "max_iterations": 3
+    }
+  ],
+  "workflow": {
+    "start_node": "agent_1",
+    "edges": [
+      {"from": "agent_1", "to": "agent_2", "condition": "analysis_complete"},
+      {"from": "agent_2", "to": "end"}
+    ]
+  }
+}

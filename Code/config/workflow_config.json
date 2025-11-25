@@ -1,0 +1,9 @@
+{
+  "workflow": {
+    "start_node": "agent_1",
+    "edges": [
+      {"from": "agent_1", "to": "agent_2", "condition": "analysis_complete"},
+      {"from": "agent_2", "to": "end"}
+    ]
+  }
+}
