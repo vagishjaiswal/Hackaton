@@ -1,2 +1,6 @@
-Sno,First Name,Last Name
-1,Vagish,Jaiswal
+Focus-Area,Color,Background,Generate,Count
+Azure,White  &  Dark Blue,Black,FALSE,0
+Java,White & Dark brown,Black,FALSE,0
+SQL,Dark Golden & Light yellow,Black,TRUE,0
+GenAI,White & Light Grey,Dark Blue,FALSE,0
+DevOps,White & Light Grey,Dark Blue,FALSE,0
