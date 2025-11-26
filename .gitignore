@@ -2,3 +2,4 @@
 /Code/src/__pycache__
 /Code/src/llm/__pycache__
 *.pyc
+/Code/.backups
