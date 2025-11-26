@@ -24,8 +24,8 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Union
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent))
+# Add src to path - adjust for tests/workflow subdirectory
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.agents.csv_filter_agent import CSVFilterAgent
 

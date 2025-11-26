@@ -12,8 +12,8 @@ import json
 import sys
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent))
+# Add src to path - adjust for tests/workflow subdirectory
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.agents.csv_filter_agent import CSVFilterAgent, filter_csv
 
@@ -25,7 +25,7 @@ def example_1_basic_usage():
     print("="*80)
     
     # Initialize the agent
-    agent = CSVFilterAgent(data_dir="Code/data/input")
+    agent = CSVFilterAgent(data_dir="data/input")
     
     # Create input as dictionary
     input_data = {
@@ -52,7 +52,7 @@ def example_2_json_string_input():
     print("Example 2: JSON String Input")
     print("="*80)
     
-    agent = CSVFilterAgent(data_dir="Code/data/input")
+    agent = CSVFilterAgent(data_dir="data/input")
     
     # Create input as JSON string
     input_json = '''
@@ -81,7 +81,7 @@ def example_3_filter_by_false():
     print("Example 3: Filter by FALSE Value")
     print("="*80)
     
-    agent = CSVFilterAgent(data_dir="Code/data/input")
+    agent = CSVFilterAgent(data_dir="data/input")
     
     input_data = {
         "csv_file_name": "sample-csv.csv",
@@ -107,7 +107,7 @@ def example_4_filter_by_string():
     print("Example 4: Filter by String Value")
     print("="*80)
     
-    agent = CSVFilterAgent(data_dir="Code/data/input")
+    agent = CSVFilterAgent(data_dir="data/input")
     
     input_data = {
         "csv_file_name": "sample-csv.csv",
@@ -132,7 +132,7 @@ def example_5_filter_by_number():
     print("Example 5: Filter by Numeric Value")
     print("="*80)
     
-    agent = CSVFilterAgent(data_dir="Code/data/input")
+    agent = CSVFilterAgent(data_dir="data/input")
     
     input_data = {
         "csv_file_name": "sample-csv.csv",
@@ -158,7 +158,7 @@ def example_6_get_json_string():
     print("Example 6: Get Result as JSON String")
     print("="*80)
     
-    agent = CSVFilterAgent(data_dir="Code/data/input")
+    agent = CSVFilterAgent(data_dir="data/input")
     
     input_data = {
         "csv_file_name": "sample-csv.csv",
@@ -181,7 +181,7 @@ def example_7_preview_csv():
     print("Example 7: Preview CSV File")
     print("="*80)
     
-    agent = CSVFilterAgent(data_dir="Code/data/input")
+    agent = CSVFilterAgent(data_dir="data/input")
     
     preview = agent.preview_csv("sample-csv.csv", n_rows=3)
     
@@ -197,7 +197,7 @@ def example_8_get_headers():
     print("Example 8: Get CSV Headers")
     print("="*80)
     
-    agent = CSVFilterAgent(data_dir="Code/data/input")
+    agent = CSVFilterAgent(data_dir="data/input")
     
     headers = agent.get_headers("sample-csv.csv")
     
@@ -218,7 +218,7 @@ def example_9_convenience_function():
         csv_file_name="sample-csv.csv",
         filtered_column_name="Generate",
         value=True,
-        data_dir="Code/data/input"
+        data_dir="data/input"
     )
     
     print("\nFiltered Results:")
@@ -233,7 +233,7 @@ def example_10_error_handling():
     print("Example 10: Error Handling Examples")
     print("="*80)
     
-    agent = CSVFilterAgent(data_dir="Code/data/input")
+    agent = CSVFilterAgent(data_dir="data/input")
     
     # Test 1: Invalid column name
     print("\n--- Test 1: Invalid Column Name ---")

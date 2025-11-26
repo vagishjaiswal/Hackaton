@@ -513,6 +513,26 @@ class BaseAgent(ABC):
             "llm_config": self.llm.get_config() if self.llm else {}
         }
     
+    @property
+    def llm_provider_name(self) -> str:
+        """
+        Get the LLM provider name.
+        
+        Returns:
+            Provider name (e.g., "openai", "ollama")
+        """
+        return self.llm.provider_name if self.llm else "unknown"
+    
+    @property
+    def llm_model_name(self) -> str:
+        """
+        Get the LLM model name.
+        
+        Returns:
+            Model name (e.g., "gpt-4", "llama3.2")
+        """
+        return self.llm.config.model if self.llm else "unknown"
+    
     def __repr__(self) -> str:
         """String representation of agent."""
         provider = self.llm.provider_name if self.llm else "mock"

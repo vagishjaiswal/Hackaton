@@ -1,3 +1,11 @@
-Sno,empid,first name,last name
-1,101,Vag,Ji
-2,102,Raj,Sb
+user_id,name,skills,experience_years,job_role,active
+1,John Doe,"Python,Machine Learning,Data Analysis",5,Data Scientist,TRUE
+2,Jane Smith,"Java,Spring Boot,Microservices",7,Backend Engineer,TRUE
+3,Alice Johnson,"React,TypeScript,CSS",3,Frontend Developer,FALSE
+4,Bob Wilson,"Python,Django,PostgreSQL",4,Full Stack Developer,TRUE
+5,Carol Martinez,"AWS,Docker,Kubernetes",6,DevOps Engineer,TRUE
+6,David Lee,"SQL,Power BI,Tableau",8,Data Analyst,FALSE
+7,Emma Brown,"Python,TensorFlow,PyTorch",4,ML Engineer,TRUE
+8,Frank Garcia,"JavaScript,Node.js,MongoDB",5,Backend Developer,TRUE
+9,Grace Taylor,"C#,.NET,Azure",6,Cloud Engineer,TRUE
+10,Henry Anderson,"Python,FastAPI,Redis",3,Software Engineer,TRUE

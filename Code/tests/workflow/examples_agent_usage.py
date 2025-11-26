@@ -25,10 +25,11 @@ import asyncio
 import logging
 import sys
 import os
+from pathlib import Path
 from typing import Optional
 
-# Add src to path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add src to path - adjust for tests/workflow subdirectory
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.agents import (
     SimpleExecutorAgent,
