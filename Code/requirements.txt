@@ -12,5 +12,6 @@ nest_asyncio>=1.5.8
 tenacity>=8.2.3
 pytest>=7.4.0
 pytest-asyncio>=0.21.0
+chardet>=5.2.0
 black>=23.0.0
 ruff>=0.1.0

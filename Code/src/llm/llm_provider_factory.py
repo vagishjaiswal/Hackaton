@@ -54,7 +54,9 @@ class LLMProviderFactory:
             return OpenAIProvider(config, api_key)
 
         elif provider_type == ProviderType.OLLAMA:
-            return OllamaProvider(config, base_url=base_url)
+            # Use default Ollama URL if not provided
+            ollama_url = "http://localhost:11434"
+            return OllamaProvider(config, base_url=ollama_url)
 
         elif provider_type == ProviderType.GEMINI:
             raise NotImplementedError("Gemini provider coming soon")
