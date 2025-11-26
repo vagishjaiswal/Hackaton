@@ -1,0 +1,64 @@
+# Core LangChain packages
+langchain>=0.1.0
+langchain-core>=0.1.0
+langchain-community>=0.0.20
+
+# LLM Providers
+langchain-openai>=0.0.5           # OpenAI (GPT-4, GPT-3.5)
+langchain-google-genai>=0.0.6     # Google Gemini (future)
+# Ollama uses langchain-community (included above)
+
+# Web Framework (Streamlit for UI)
+streamlit>=1.30.0
+
+# Data Processing
+pandas>=2.0.0                      # CSV handling and data analysis
+numpy>=1.24.0                      # Numerical operations
+chardet>=5.0.0                     # Character encoding detection
+
+# Configuration & Environment
+python-dotenv>=1.0.0               # Environment variables
+pydantic>=2.0.0                    # Data validation
+
+# HTTP & Networking
+aiohttp>=3.9.0                     # Async HTTP client
+requests>=2.31.0                   # Sync HTTP client
+
+# Retry Logic & Resilience
+tenacity>=8.2.0                    # Retry with backoff
+
+# Logging & Monitoring
+colorlog>=6.7.0                    # Colored logging (optional)
+
+# Testing
+pytest>=7.4.0                      # Testing framework
+pytest-asyncio>=0.21.0             # Async test support
+pytest-cov>=4.1.0                  # Coverage reporting
+
+# Code Quality (development)
+black>=23.0.0                      # Code formatting
+ruff>=0.1.0                        # Fast linting
+mypy>=1.7.0                        # Type checking
+
+# Notebook Support (optional)
+jupyter>=1.0.0                     # Jupyter notebooks
+ipykernel>=6.25.0                  # Kernel for notebooks
+
+# Additional Tools
+tiktoken>=0.5.0                    # Token counting for OpenAI
+python-multipart>=0.0.6            # File uploads (for UI)
+
+# Graph Visualization (for workflow viz)
+networkx>=3.1                      # Graph structures
+matplotlib>=3.7.0                  # Plotting
+plotly>=5.17.0                     # Interactive plots
+
+# LangGraph for workflows
+langgraph>=0.0.20                  # Agent orchestration
+
+# For async operations in Streamlit
+nest-asyncio>=1.5.0                # Nested async loops
+
+# Optional: Vector stores (future)
+# chromadb>=0.4.0                  # Vector database
+# faiss-cpu>=1.7.4                 # FAISS for similarity search
