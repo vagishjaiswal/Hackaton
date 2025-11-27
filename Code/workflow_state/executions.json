@@ -1,0 +1,51 @@
+{
+  "executions": [
+    {
+      "execution_id": "exec_1764264737442",
+      "user_input": {
+        "user_id": 1,
+        "user_name": null,
+        "csv_file": "test-agent.csv",
+        "num_questions": 1,
+        "llm_provider": "openai",
+        "llm_model": "gpt-4"
+      },
+      "status": "completed",
+      "current_step": "Completed",
+      "steps_completed": 6,
+      "total_steps": 6,
+      "start_time": "2025-11-27T23:02:17.442999",
+      "end_time": "2025-11-27T23:02:23.729344",
+      "error": null,
+      "logs": [
+        "[23:02:17] [INFO] Workflow started",
+        "[23:02:17] [INFO] Executing workflow..."
+      ],
+      "result": {
+        "status": "success",
+        "user_profile": {
+          "user_id": 1,
+          "name": "John Doe",
+          "skills": "Python,Machine Learning,Data Analysis",
+          "experience_years": 5,
+          "job_role": "Data Scientist",
+          "active": true
+        },
+        "interview_questions": [
+          {
+            "question": "Can you explain how you have used machine learning algorithms in your previous data analysis projects?",
+            "category": "technical",
+            "difficulty": "mid",
+            "rationale": "This question is designed to assess the candidate's practical experience and understanding of machine learning algorithms in the context of data analysis. It also gives insight into the candidate's ability to apply their technical skills to real-world problems."
+          }
+        ],
+        "metadata": {
+          "total_questions": 1,
+          "user_name": "John Doe",
+          "job_role": "Data Scientist",
+          "steps_completed": 5
+        }
+      }
+    }
+  ]
+}

@@ -62,3 +62,5 @@ nest-asyncio>=1.5.0                # Nested async loops
 # Optional: Vector stores (future)
 # chromadb>=0.4.0                  # Vector database
 # faiss-cpu>=1.7.4                 # FAISS for similarity search
+
+tinydb>=4.8.0                     # Lightweight database

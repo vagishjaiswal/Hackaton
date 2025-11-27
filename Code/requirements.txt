@@ -15,3 +15,9 @@ pytest-asyncio>=0.21.0
 chardet>=5.2.0
 black>=23.0.0
 ruff>=0.1.0
+tinydb>=4.8.0
+
+# OCR Agent Dependencies
+pytesseract>=0.3.10
+Pillow>=10.0.0
+chromadb>=0.4.0

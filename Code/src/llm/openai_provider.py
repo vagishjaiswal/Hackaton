@@ -10,6 +10,7 @@ Date: 2024-12-19
 
 import asyncio
 import logging
+import os
 from typing import Any, Dict, List, Optional
 from tenacity import (
     retry,
@@ -55,17 +56,26 @@ class OpenAIProvider(BaseLLMProvider):
         ```
     """
     
-    def __init__(self, config: LLMConfig, api_key: str):
+    def __init__(self, config: LLMConfig, api_key: Optional[str] = None):
         """
         Initialize the OpenAI provider.
         
         Args:
             config: LLM configuration object
-            api_key: OpenAI API key
+            api_key: OpenAI API key (if not provided, fetched from OPENAI_API_KEY env var)
             
         Raises:
-            ValueError: If API key is invalid
+            ValueError: If API key is not provided and not in environment
         """
+        # Fetch API key from environment if not provided
+        if not api_key:
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                raise ValueError(
+                    "OpenAI API key must be provided or set in OPENAI_API_KEY environment variable"
+                )
+            logger.info("Using OpenAI API key from OPENAI_API_KEY environment variable")
+        
         super().__init__("openai", config, api_key)
         self._client = self._initialize_client()
         logger.info(f"Initialized OpenAI provider with model: {config.model}")

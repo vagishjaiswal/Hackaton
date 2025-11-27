@@ -49,8 +49,7 @@ class LLMProviderFactory:
         config = LLMConfig(model=model, **kwargs)
 
         if provider_type == ProviderType.OPENAI:
-            if not api_key:
-                raise ValueError("api_key required for OpenAI provider")
+            # api_key can be None - OpenAIProvider will fetch from environment
             return OpenAIProvider(config, api_key)
 
         elif provider_type == ProviderType.OLLAMA:
