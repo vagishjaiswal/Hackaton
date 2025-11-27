@@ -3,3 +3,7 @@
 /Code/src/llm/__pycache__
 *.pyc
 /Code/.backups
+/Code/chroma_db
+/Code/custom_ocr_db
+/Code/ocr_database
+/Code/ocr_database_openai

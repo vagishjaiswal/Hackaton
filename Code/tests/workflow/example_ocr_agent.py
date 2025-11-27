@@ -30,15 +30,13 @@ async def example_single_image():
     
     # Initialize OCR Agent
     agent = OCRAgent(
-        name="my_ocr_agent",
-        llm_provider="ollama",  # or "openai"
-        llm_model="llama3.2",   # or "gpt-4"
+        provider="ollama",  # or "openai"
         chroma_db_path="./ocr_database",
         chroma_collection="my_documents"
     )
     
     # Path to your image (update this!)
-    image_path = "path/to/your/image.png"
+    image_path = "data/input/image.png"
     
     # Check if file exists
     if not os.path.exists(image_path):
@@ -68,13 +66,23 @@ async def example_single_image():
         print(f"  Word Count: {ocr['word_count']}")
         print(f"  Text Preview: {ocr['text'][:200]}...")
         
-        # LLM Analysis
-        if result["analysis"] and result["analysis"]["success"]:
-            analysis = result["analysis"]["analysis"]
-            print(f"\n🤖 LLM Analysis:")
+        # Vision Analysis
+        if result["vision_data"]:
+            vision = result["vision_data"]
+            print(f"\n👁️ Vision Analysis:")
+            print(f"  Description: {vision.get('overall_description', 'N/A')[:200]}...")
+            if vision.get('objects'):
+                print(f"  Objects: {', '.join([obj.get('name', '') for obj in vision['objects'][:5]])}")
+            if vision.get('colors', {}).get('dominant_colors'):
+                print(f"  Colors: {', '.join(vision['colors']['dominant_colors'])}")
+        
+        # Combined Analysis
+        if result["combined_analysis"] and result["combined_analysis"]["success"]:
+            analysis = result["combined_analysis"]["analysis"]
+            print(f"\n🤖 Combined Analysis:")
             print(f"  Document Type: {analysis.get('document_type', 'N/A')}")
             print(f"  Tags: {', '.join(analysis.get('tags', []))}")
-            print(f"  Summary: {analysis.get('summary', 'N/A')}")
+            print(f"  Summary: {analysis.get('comprehensive_summary', 'N/A')[:200]}...")
             print(f"  Confidence: {analysis.get('confidence', 0)}%")
             
             if analysis.get('key_information'):
@@ -93,16 +101,13 @@ async def example_batch_processing():
     
     # Initialize agent
     agent = OCRAgent(
-        name="batch_ocr_agent",
-        llm_provider="ollama",
-        llm_model="llama3.2"
+        provider="ollama"
     )
     
     # List of images to process (update these!)
     image_paths = [
-        "path/to/image1.png",
-        "path/to/image2.jpg",
-        "path/to/image3.tiff"
+        "data/input/200w.gif",
+        "data/input/image.png"
     ]
     
     # Filter only existing files
@@ -127,7 +132,11 @@ async def example_batch_processing():
     
     for i, result in enumerate(results, 1):
         status = "✅" if result["success"] else "❌"
-        print(f"{status} Image {i}: {existing_paths[i-1]}")
+        details = ""
+        if result.get("processing_summary"):
+            summary = result["processing_summary"]
+            details = f" - OCR: {summary.get('ocr_success')}, Vision: {summary.get('vision_success')}, Analysis: {summary.get('analysis_success')}"
+        print(f"{status} Image {i}: {existing_paths[i-1]}{details}")
 
 
 async def example_search_documents():
@@ -138,9 +147,7 @@ async def example_search_documents():
     
     # Initialize agent (connects to existing database)
     agent = OCRAgent(
-        name="search_agent",
-        llm_provider="ollama",
-        llm_model="llama3.2",
+        provider="ollama",
         chroma_db_path="./ocr_database"
     )
     
@@ -170,13 +177,14 @@ async def example_search_documents():
             found = len(results["ids"][0]) if results["ids"] else 0
             print(f"  Found {found} results")
             
-            # Display top result
+            # Display top results
             if found > 0:
-                top_doc = results["documents"][0][0]
-                top_metadata = results["metadatas"][0][0]
-                print(f"  Top Result:")
-                print(f"    Type: {top_metadata.get('document_type', 'N/A')}")
-                print(f"    Preview: {top_doc[:100]}...")
+                for j in range(min(2, found)):
+                    top_doc = results["documents"][0][j]
+                    top_metadata = results["metadatas"][0][j]
+                    print(f"  Result {j+1}:")
+                    print(f"    Type: {top_metadata.get('document_type', 'N/A')}")
+                    print(f"    Preview: {top_doc[:100]}...")
         else:
             print(f"  ❌ Search failed: {results['error']}")
 
@@ -196,9 +204,7 @@ async def example_custom_configuration():
     
     # Initialize with custom settings
     agent = OCRAgent(
-        name="custom_ocr_agent",
-        llm_provider="ollama",
-        llm_model="llama3.2",
+        provider="ollama",
         llm_config=llm_config,
         tesseract_lang="eng+fra",  # English + French
         chroma_db_path="./custom_ocr_db",
@@ -213,36 +219,110 @@ async def example_custom_configuration():
     print(f"  Custom system prompt applied")
 
 
+async def example_openai_usage():
+    """Example: Process an image using OpenAI as the LLM and Vision provider."""
+    print("\n" + "="*60)
+    print("EXAMPLE 5: Using OpenAI as LLM and Vision Provider")
+    print("="*60)
+
+    # Initialize OCR Agent with OpenAI for both LLM and Vision
+    agent = OCRAgent(
+        provider="openai",
+        chroma_db_path="./ocr_database_openai",
+        chroma_collection="openai_documents"
+    )
+
+    # Path to your image (update this!)
+    image_path = "data/input/image.png"
+
+    # Check if file exists
+    if not os.path.exists(image_path):
+        print(f"❌ Image not found: {image_path}")
+        print("Please update the image_path in this script!")
+        return
+
+    # Process the image
+    print(f"\n📸 Processing: {image_path}")
+    result = await agent.process_image(
+        image_path=image_path,
+        use_vision=True,   # Use vision analysis
+        analyze=True,      # Use LLM for analysis
+        save_to_db=True,   # Save to ChromaDB
+        preprocess=True,   # Apply image preprocessing
+        auto_rotate=True   # Auto-rotate based on text
+    )
+
+    # Display results
+    if result["success"]:
+        print("\n✅ Processing successful!")
+        print(f"Document ID: {result['document_id']}")
+
+        # OCR Results
+        ocr = result["ocr_result"]
+        print("\n📝 OCR Results:")
+        print(f"  Confidence: {ocr['confidence']:.2f}%")
+        print(f"  Word Count: {ocr['word_count']}")
+        print(f"  Text Preview: {ocr['text'][:200]}..." if ocr['text'] else "  No text found")
+
+        # Vision Analysis (from OpenAI)
+        if result["vision_data"]:
+            vision = result["vision_data"]
+            print("\n👁️ OpenAI Vision Analysis:")
+            print(f"  Description: {vision.get('overall_description', 'N/A')[:200]}...")
+            if vision.get('objects'):
+                obj_names = [obj.get('name', '') for obj in vision['objects'][:5]]
+                print(f"  Objects: {', '.join(obj_names)}")
+            if vision.get('colors', {}).get('dominant_colors'):
+                print(f"  Colors: {', '.join(vision['colors']['dominant_colors'])}")
+            if vision.get('people'):
+                print(f"  People detected: {len(vision['people'])}")
+
+        # Combined Analysis (from OpenAI LLM)
+        if result["combined_analysis"] and result["combined_analysis"]["success"]:
+            analysis = result["combined_analysis"]["analysis"]
+            print("\n🤖 OpenAI LLM Analysis:")
+            print(f"  Document Type: {analysis.get('document_type', 'N/A')}")
+            print(f"  Tags: {', '.join(analysis.get('tags', []))}")
+            print(f"  Summary: {analysis.get('comprehensive_summary', 'N/A')[:200]}...")
+            print(f"  Confidence: {analysis.get('confidence', 0)}%")
+
+            if analysis.get('key_information'):
+                print("\n📊 Key Information:")
+                for key, value in analysis['key_information'].items():
+                    print(f"  {key}: {value}")
+    else:
+        print(f"\n❌ Processing failed: {result.get('error', 'Unknown error')}")
+
+
+# --- Simple test for OpenAI and Ollama image analysis ---
+async def test_simple_image_analysis():
+    print("\n" + "="*60)
+    print("TEST: Simple Image Analysis (OpenAI & Ollama)")
+    print("="*60)
+    image_path = "data/input/image.png"  # Update as needed
+    if not os.path.exists(image_path):
+        print(f"❌ Image not found: {image_path}")
+        return
+
+    # OpenAI Vision
+    agent_openai = OCRAgent(provider="openai")
+    print(f"\n🔬 OpenAI Vision Analysis for '{image_path}':")
+    openai_result = agent_openai._process_image(image_path)
+    print(f"OpenAI Result:\n{openai_result}\n")
+
+    # Ollama Vision
+    agent_ollama = OCRAgent(provider="ollama")
+    print(f"\n🔬 Ollama Vision Analysis for '{image_path}':")
+    ollama_result = agent_ollama._process_image(image_path)
+    print(f"Ollama Result:\n{ollama_result}\n")
+
+
 async def main():
     """Run all examples."""
     print("\n" + "="*60)
-    print("OCR AGENT - EXAMPLES")
+    print("OCR AGENT - SIMPLE IMAGE ANALYSIS")
     print("="*60)
-    print("\nThis script demonstrates the OCR Agent capabilities.")
-    print("Make sure to:")
-    print("  1. Install dependencies: pip install pytesseract Pillow chromadb")
-    print("  2. Install Tesseract OCR on your system")
-    print("  3. Update image paths in the examples")
-    print("  4. Have Ollama running (or configure OpenAI)")
-    
-    # Run examples
-    try:
-        await example_single_image()
-        await example_batch_processing()
-        await example_search_documents()
-        await example_custom_configuration()
-        
-        print("\n" + "="*60)
-        print("All examples completed!")
-        print("="*60)
-    
-    except KeyboardInterrupt:
-        print("\n\n⚠️  Interrupted by user")
-    except Exception as e:
-        print(f"\n\n❌ Error: {e}")
-        import traceback
-        traceback.print_exc()
-
+    await test_simple_image_analysis()
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -19,8 +19,9 @@ import tempfile
 from pathlib import Path
 import sys
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Add Code directory to path for imports
+code_dir = Path(__file__).parent.parent.resolve()
+sys.path.insert(0, str(code_dir))
 
 from PIL import Image, ImageDraw, ImageFont
 from src.agents.ocr_agent import (
