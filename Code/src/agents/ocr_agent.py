@@ -32,7 +32,7 @@ class OCRAgent:
             metadata={"description": "OCR document chunks with vision analysis"}
         )
         self.ollama_url = os.getenv('OLLAMA_URL', 'http://localhost:11434')
-        self.ollama_model = os.getenv('OLLAMA_MODEL', 'phi3')
+        self.ollama_model = os.getenv('OLLAMA_MODEL', 'llava-phi3')
         self.openai_model = os.getenv('OPENAI_VISION_MODEL', 'gpt-4o')
 
     def process_document(self, file_path: str) -> List[Dict]:

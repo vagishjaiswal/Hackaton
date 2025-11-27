@@ -28,7 +28,9 @@ Expected output:
 ============================================================
 OPENAI PROVIDER TEST SUITE
 ============================================================
-
+$env:OPENAI_API_KEY = "";
+sk-proj--
+Temp: AfbVfuYLOBUWEcjhtJGZP8vdhHh0edYf2m18JfNtz_8bYkJARxVsm9JGKmonoAJFkSKAwHIVqT3BlbkFJeLShc2HoeBdHbGhvhSObOzcbGwYM8LmW38QlPWRrcX6FB_9Q_CzC3f_USBiak2U_BVp0EqiCMA
 ============================================================
 TEST 1: Basic Text Generation
 ============================================================

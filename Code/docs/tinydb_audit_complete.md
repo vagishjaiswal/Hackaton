@@ -1,573 +1,396 @@
-# TinyDB Audit System - Complete Implementation
+# Chat-Based Workflow with Sequence Evaluator
 
-## Overview
+## 🎯 Overview
 
-A comprehensive audit and monitoring system using TinyDB for the Hackathon AI Agent framework. This system provides persistent audit logging, workflow tracking, agent metrics, and comprehensive analytics.
+An intelligent, interactive workflow system that:
+1. Takes user tasks in natural language
+2. Uses LLM to analyze and generate optimal execution sequences
+3. Identifies missing information and asks clarifying questions
+4. Executes multi-step workflows automatically
+5. Returns aggregated results to the user
 
----
+## 🏗️ Architecture
 
-## 📁 Files Created
-
-### 1. **`src/tools/audit_manager.py`** (~500 lines)
-
-**Core audit management system using TinyDB**
-
-Classes:
-- `AuditEntry` - Individual audit log entry
-- `WorkflowAudit` - Workflow execution tracking
-- `AgentMetrics` - Agent performance metrics
-- `TinyDBAuditManager` - Main audit manager
-
-Features:
-- ✅ Workflow start/end tracking
-- ✅ Agent action logging
-- ✅ Performance metrics
-- ✅ Query and analysis
-- ✅ Data export/import
-- ✅ Thread-safe operations
-- ✅ Data retention policies
-
-**Methods:**
-```python
-# Workflow management
-start_workflow(workflow_id, user_id, total_steps)
-end_workflow(workflow_id, execution_id, status, agents_used, output_data, error)
-
-# Agent logging
-log_agent_action(workflow_id, execution_id, agent_name, action, status, duration_ms)
-
-# Queries
-get_workflow_metrics(workflow_id, execution_id)
-get_agent_metrics(agent_name)
-get_audit_trail(workflow_id, execution_id, event_type, limit)
-get_recent_errors(hours, limit)
-get_execution_summary(execution_id)
-get_statistics()
-
-# Data management
-clear_old_data(days)
-export_data(export_path)
-close()
+```
+User Task
+    ↓
+Sequence Evaluator Agent (LLM)
+    ├→ Analyzes task
+    ├→ Discovers available agents/tools
+    ├→ Generates execution sequence
+    └→ Identifies clarifications needed
+    ↓
+Chat-Based Workflow
+    ├→ Asks clarifying questions (if needed)
+    ├→ Waits for user answers
+    ├→ Re-evaluates with new information
+    └→ Executes sequence step-by-step
+    ↓
+Results
 ```
 
----
+## 📁 Files Created OK
 
-### 2. **`src/tools/audit_tools.py`** (~400 lines)
+```
+Code/src/agents/
+├── sequence_evaluator_agent.py    # LLM-based sequence planner
 
-**Agent-usable tools for audit system interaction**
+Code/src/workflow/
+├── chat_based_workflow.py         # Interactive workflow engine
 
-Tool Classes:
-- `AuditLogTool` - Log agent actions
-- `WorkflowStatusTool` - Track workflow status
-- `AuditQueryTool` - Query audit data
-- `ExportAuditTool` - Export and manage data
+Code/tests/workflow/
+└── example_chat_workflow.py       # Examples and demos
+```
 
-**Usage Examples:**
+## 🚀 Quick Start
+
+### 1. Basic Usage
 
 ```python
-# Create tools
-audit_log_tool = AuditLogTool(audit_manager)
-workflow_status_tool = WorkflowStatusTool(audit_manager)
-query_tool = AuditQueryTool(audit_manager)
-export_tool = ExportAuditTool(audit_manager)
+from src.workflow.chat_based_workflow import ChatBasedWorkflow
 
-# Agent can log actions
-result = audit_log_tool.execute(
-    workflow_id="wf_123",
-    execution_id="exec_1",
-    agent_name="DataAnalyst",
-    action="analyze_csv",
-    status="success",
-    duration_ms=150.5
+# Create workflow
+workflow = ChatBasedWorkflow(
+    llm_provider="ollama",
+    llm_model="llama3.2"
 )
 
-# Query audit data
-results = query_tool.execute(
-    query_type="audit_trail",
-    workflow_id="wf_123"
+# User provides task
+response = await workflow.process_message(
+    "Analyze the sales data from Q4 2024"
 )
 
-# Get agent metrics
-metrics = query_tool.execute(query_type="agent_metrics")
+print(response)
 ```
 
----
+### 2. Handling Clarifications
 
-### 3. **`ui/admin_monitor_ui.py`** (~800 lines - UPDATED)
-
-**Enhanced Streamlit admin UI with TinyDB integration**
-
-Features:
-- ✅ Real-time workflow monitoring
-- ✅ TinyDB audit trail viewing
-- ✅ Metrics and analytics dashboard
-- ✅ Agent performance tracking
-- ✅ Error analysis
-- ✅ System health monitoring
-- ✅ Data export functionality
-
-**Pages:**
-1. **Current Execution** - Active workflow with audit trail
-2. **Audit Trail** - Complete audit history with filtering
-3. **Metrics & Analytics** - Duration analysis, error trends
-4. **Agent Performance** - Agent metrics, success rates
-5. **System Health** - Database health, maintenance
-
----
-
-## 🗄️ Database Structure
-
-### Audit Database (`audit_log.json`)
-```json
-{
-  "timestamp": "2024-11-27T10:30:45.123456",
-  "event_type": "agent_action",
-  "workflow_id": "wf_123",
-  "execution_id": "exec_1",
-  "agent_name": "DataAnalyst",
-  "action": "analyze_csv",
-  "status": "success",
-  "duration_ms": 150.5,
-  "details": {},
-  "error_message": null
-}
-```
-
-### Workflow Database (`workflows.json`)
-```json
-{
-  "workflow_id": "wf_123",
-  "execution_id": "exec_1",
-  "user_id": "user_1",
-  "start_time": "2024-11-27T10:30:00",
-  "end_time": "2024-11-27T10:32:30",
-  "status": "completed",
-  "total_steps": 6,
-  "completed_steps": 6,
-  "agents_used": ["DataAnalyst", "Researcher"],
-  "total_duration_ms": 150000.0,
-  "error_details": null,
-  "input_data": {},
-  "output_data": {}
-}
-```
-
-### Metrics Database (`metrics.json`)
-```json
-{
-  "agent_name": "DataAnalyst",
-  "total_executions": 42,
-  "successful_executions": 41,
-  "failed_executions": 1,
-  "avg_duration_ms": 125.5,
-  "total_duration_ms": 5271.0,
-  "last_executed": "2024-11-27T10:32:30",
-  "last_error": null
-}
-```
-
----
-
-## 🔧 Integration Guide
-
-### Step 1: Import the audit manager
 ```python
-from src.tools.audit_manager import TinyDBAuditManager
-from src.tools.audit_tools import (
-    AuditLogTool, WorkflowStatusTool, 
-    AuditQueryTool, ExportAuditTool
+# If workflow needs clarification
+if workflow.needs_clarification():
+    clarifications = workflow.get_clarifications()
+    
+    # Show questions to user
+    for c in clarifications:
+        print(f"Q: {c['question']}")
+    
+    # User answers
+    answers = {
+        "csv_file": "sales_q4.csv",
+        "analysis_type": "summary"
+    }
+    
+    # Provide answers
+    response = await workflow.process_message(json.dumps(answers))
+```
+
+### 3. Check Workflow State
+
+```python
+state = workflow.get_state()
+
+print(f"Status: {state['status']}")
+print(f"Current Step: {state['current_step']}/{state['total_steps']}")
+print(f"Needs Clarification: {state['needs_clarification']}")
+```
+
+## 📊 Features
+
+### 1. Sequence Evaluator Agent
+
+**Capabilities**:
+- Analyzes user tasks
+- Discovers available agents and tools
+- Generates optimal execution sequences
+- Identifies missing information
+- Provides reasoning for decisions
+
+**Example**:
+```python
+from src.agents.sequence_evaluator_agent import SequenceEvaluatorAgent
+
+evaluator = SequenceEvaluatorAgent()
+
+# Register available resources
+evaluator.register_available_agent(
+    "DataAnalyst",
+    "Analyzes CSV data and provides insights"
+)
+evaluator.register_available_tool(
+    "CSVLoader",
+    "Loads and validates CSV files"
+)
+
+# Evaluate a task
+result = await evaluator.evaluate_sequence(
+    task="Analyze customer data and find trends",
+    context={"has_csv": True}
+)
+
+# result contains:
+# - sequence: List of steps
+# - clarifications: Questions for user
+# - reasoning: Why this sequence
+# - can_execute: True/False
+```
+
+### 2. Chat-Based Workflow
+
+**Capabilities**:
+- Interactive conversation
+- Dynamic sequence generation
+- Clarification handling
+- Step-by-step execution
+- Result aggregation
+- Error recovery
+
+**Example**:
+```python
+workflow = ChatBasedWorkflow()
+
+# Process messages
+response = await workflow.process_message("Help me analyze data")
+
+# Workflow asks questions
+# User answers
+response = await workflow.process_message("The file is sales.csv")
+
+# Workflow executes and returns results
+```
+
+### 3. Agent & Tool Registry
+
+**Built-in Agents**:
+- `DataAnalyst`: CSV data analysis
+- `Researcher`: Information gathering
+- `SimpleExecutor`: General task execution
+
+**Built-in Tools**:
+- `CSVLoader`: CSV file operations
+
+**Register Custom Agents**:
+```python
+workflow.register_agent(
+    name="CustomAgent",
+    description="Does custom tasks",
+    agent_class=MyCustomAgent
 )
 ```
 
-### Step 2: Initialize the audit manager
+**Register Custom Tools**:
 ```python
-audit_manager = TinyDBAuditManager(db_path="audit_logs")
-```
-
-### Step 3: Create audit tools
-```python
-audit_log_tool = AuditLogTool(audit_manager)
-workflow_status_tool = WorkflowStatusTool(audit_manager)
-query_tool = AuditQueryTool(audit_manager)
-export_tool = ExportAuditTool(audit_manager)
-```
-
-### Step 4: Register tools with agent
-```python
-agent.register_tool(audit_log_tool)
-agent.register_tool(workflow_status_tool)
-agent.register_tool(query_tool)
-agent.register_tool(export_tool)
-```
-
-### Step 5: Start workflow
-```python
-exec_id = audit_manager.start_workflow("wf_123", user_id="user_1")
-```
-
-### Step 6: Log agent actions
-```python
-audit_manager.log_agent_action(
-    workflow_id="wf_123",
-    execution_id=exec_id,
-    agent_name="DataAnalyst",
-    action="analyze_csv",
-    status="success",
-    duration_ms=150.0
+workflow.register_tool(
+    name="CustomTool",
+    description="Custom functionality",
+    tool_function=my_tool_function
 )
 ```
 
-### Step 7: End workflow
+## 🎓 How It Works
+
+### Step 1: Task Analysis
+
+User: "Analyze sales data from Q4"
+
+Sequence Evaluator:
+1. Identifies this requires CSV analysis
+2. Checks available agents/tools
+3. Generates sequence:
+   - Load CSV with CSVLoader
+   - Analyze with DataAnalyst
+   - Format results
+
+### Step 2: Clarification
+
+Evaluator identifies missing info:
+- Which CSV file?
+- What kind of analysis?
+
+Workflow asks user:
+```
+I need some clarification:
+1. Which CSV file should I analyze?
+2. What type of analysis? (summary/detailed/trends)
+```
+
+### Step 3: Execution
+
+Once clarified:
+```
+Execution Plan:
+1. Load CSV file
+   Using: CSVLoader
+   Action: Load sales_q4.csv
+
+2. Analyze data
+   Using: DataAnalyst
+   Action: Generate summary statistics
+
+3. Format results
+   Using: SimpleExecutor
+   Action: Create readable report
+```
+
+### Step 4: Results
+
+```
+✓ Execution completed!
+
+Completed 3 steps:
+✓ Step 1: Load CSV file
+✓ Step 2: Analyze data
+✓ Step 3: Format results
+
+--- Final Result ---
+[Analysis results here]
+```
+
+## 🔧 Configuration
+
+### LLM Provider
+
 ```python
-audit_manager.end_workflow(
-    workflow_id="wf_123",
-    execution_id=exec_id,
-    status="completed",
-    agents_used=["DataAnalyst"],
-    output_data={"result": "analysis complete"}
+# Use Ollama (local)
+workflow = ChatBasedWorkflow(
+    llm_provider="ollama",
+    llm_model="llama3.2"
+)
+
+# Use OpenAI (cloud)
+workflow = ChatBasedWorkflow(
+    llm_provider="openai",
+    llm_model="gpt-4"
 )
 ```
 
----
+### Data Directory
 
-## 📊 Usage Examples
-
-### Example 1: Track Workflow Execution
 ```python
-from src.tools.audit_manager import TinyDBAuditManager
-import time
-
-audit_mgr = TinyDBAuditManager()
-
-# Start workflow
-exec_id = audit_mgr.start_workflow("analysis_wf", user_id="alice")
-
-# Simulate agent work
-start = time.time()
-# ... do work ...
-duration = (time.time() - start) * 1000
-
-# Log action
-audit_mgr.log_agent_action(
-    workflow_id="analysis_wf",
-    execution_id=exec_id,
-    agent_name="DataAnalyst",
-    action="process_data",
-    status="success",
-    duration_ms=duration
-)
-
-# End workflow
-audit_mgr.end_workflow(
-    workflow_id="analysis_wf",
-    execution_id=exec_id,
-    status="completed"
+workflow = ChatBasedWorkflow(
+    data_dir="path/to/data"
 )
 ```
 
-### Example 2: Query Agent Metrics
-```python
-# Get all agent metrics
-metrics = audit_mgr.get_agent_metrics()
-for metric in metrics:
-    print(f"Agent: {metric['agent_name']}")
-    print(f"  Executions: {metric['total_executions']}")
-    print(f"  Success Rate: {metric['successful_executions'] / metric['total_executions'] * 100:.1f}%")
-    print(f"  Avg Duration: {metric['avg_duration_ms']:.1f}ms")
-```
-
-### Example 3: Get Recent Errors
-```python
-# Get errors from last 24 hours
-errors = audit_mgr.get_recent_errors(hours=24)
-print(f"Found {len(errors)} errors in last 24 hours")
-
-for error in errors:
-    print(f"  {error['timestamp']}: {error['error_message']}")
-```
-
-### Example 4: Export Audit Data
-```python
-# Export all data to JSON
-audit_mgr.export_data("audit_backup.json")
-
-# Clean old data
-audit_mgr.clear_old_data(days=30)
-```
-
----
-
-## 🎯 Key Features
-
-### Audit Logging
-- ✅ Timestamp all events
-- ✅ Track workflow lifecycle
-- ✅ Log agent actions with duration
-- ✅ Record errors with context
-- ✅ Thread-safe operations
-
-### Metrics Tracking
-- ✅ Per-agent execution counts
-- ✅ Success/failure rates
-- ✅ Average duration calculation
-- ✅ Error tracking
-- ✅ Last execution timestamp
-
-### Querying
-- ✅ Filter by workflow ID
-- ✅ Filter by execution ID
-- ✅ Filter by event type
-- ✅ Filter by agent name
-- ✅ Time range queries
-
-### Analytics
-- ✅ Overall statistics
-- ✅ Agent performance metrics
-- ✅ Workflow duration analysis
-- ✅ Error rate analysis
-- ✅ Success rate calculation
-
-### Data Management
-- ✅ JSON-based storage (TinyDB)
-- ✅ Data retention policies
-- ✅ Export functionality
-- ✅ Automatic cleanup
-- ✅ Concurrent access support
-
----
-
-## 🔐 Security Features
-
-- ✅ Thread-safe with locks
-- ✅ Error message sanitization
-- ✅ No sensitive data logging by default
-- ✅ Access to audit tools via agent system
-- ✅ Data export for auditing
-
----
-
-## 📈 UI Features
-
-### Current Execution Page
-- Real-time workflow status
-- Progress tracking
-- Audit trail for current execution
-- Logs display
-- Input/output data viewing
-
-### Audit Trail Page
-- Complete audit history
-- Filtering by workflow/execution
-- Event type filtering
-- Timestamp display
-- Agent action tracking
-
-### Metrics Page
-- Workflow statistics
-- Duration analysis
-- Error trends
-- Agent success rates
-- Time-series charts
-
-### Agent Performance Page
-- Per-agent metrics
-- Execution counts
-- Success rates
-- Average duration
-- Last execution time
-
-### System Health Page
-- Database health checks
-- Recent activity summary
-- Maintenance options
-- Data export/cleanup
-- Error monitoring
-
----
-
-## 📦 Database Files
-
-Location: `audit_logs/` directory
-
-```
-audit_logs/
-├── audit_log.json      # All audit entries
-├── workflows.json      # Workflow executions
-└── metrics.json        # Agent metrics
-```
-
----
-
-## 🔄 Workflow Lifecycle
-
-```
-1. start_workflow()
-   ↓
-2. log_agent_action() × N
-   ↓
-3. end_workflow()
-   ↓
-4. Query via:
-   - get_audit_trail()
-   - get_workflow_metrics()
-   - get_statistics()
-```
-
----
-
-## 📊 Statistics Available
+### Verbose Logging
 
 ```python
-stats = audit_manager.get_statistics()
-
-# Returns:
-{
-    "total_workflows": 42,
-    "completed_workflows": 40,
-    "failed_workflows": 2,
-    "success_rate": 95.2,
-    "total_audit_entries": 284,
-    "total_agents": 4,
-    "agent_metrics": [...]
-}
+workflow = ChatBasedWorkflow(
+    verbose=True  # Enable detailed logs
+)
 ```
 
----
+## 📝 Examples
 
-## 🛠️ Running the UI
+### Example 1: Simple Question
 
-```bash
-# Install TinyDB
-pip install tinydb
+```python
+workflow = ChatBasedWorkflow()
 
-# Run the admin UI
-streamlit run ui/admin_monitor_ui.py --server.port 8501
-
-# Open browser
-http://localhost:8501
+response = await workflow.process_message(
+    "What is the capital of France?"
+)
+# Response: "Paris"
 ```
 
----
+### Example 2: Data Analysis
+
+```python
+workflow = ChatBasedWorkflow()
+
+# User task
+response = await workflow.process_message(
+    "Load sample-csv.csv and count the rows"
+)
+
+# Workflow may ask: "Which directory is the file in?"
+response = await workflow.process_message(
+    '{"data_dir": "data/input"}'
+)
+
+# Workflow executes and returns result
+```
+
+### Example 3: Multi-Step Task
+
+```python
+workflow = ChatBasedWorkflow()
+
+response = await workflow.process_message(
+    "Find all products in the Electronics category and calculate average price"
+)
+
+# Clarifications if needed
+# Then execution of:
+# 1. Load CSV
+# 2. Filter by category
+# 3. Calculate average
+# 4. Format result
+```
 
 ## 🧪 Testing
 
-```python
-# Test audit manager
-from src.tools.audit_manager import TinyDBAuditManager
+### Run Examples
 
-audit_mgr = TinyDBAuditManager()
-
-# Test workflow tracking
-exec_id = audit_mgr.start_workflow("test_wf")
-audit_mgr.log_agent_action("test_wf", exec_id, "TestAgent", "test_action")
-audit_mgr.end_workflow("test_wf", exec_id, "completed")
-
-# Test queries
-summary = audit_mgr.get_execution_summary(exec_id)
-assert summary is not None
-assert summary["workflow"]["status"] == "completed"
-
-# Test statistics
-stats = audit_mgr.get_statistics()
-assert stats["total_workflows"] > 0
-
-print("✅ All tests passed!")
+```bash
+cd Code
+python tests/workflow/example_chat_workflow.py
 ```
 
----
-
-## 📝 Best Practices
-
-1. **Always close manager when done**
-   ```python
-   audit_manager.close()
-   ```
-
-2. **Use meaningful workflow IDs**
-   ```python
-   exec_id = audit_mgr.start_workflow("analysis_pipeline_v2")
-   ```
-
-3. **Log duration for performance tracking**
-   ```python
-   audit_mgr.log_agent_action(
-       ...,
-       duration_ms=elapsed_time
-   )
-   ```
-
-4. **Regularly export and cleanup**
-   ```python
-   audit_mgr.export_data(f"backup_{date}.json")
-   audit_mgr.clear_old_data(days=90)
-   ```
-
-5. **Monitor error trends**
-   ```python
-   errors = audit_mgr.get_recent_errors(hours=24)
-   if len(errors) > threshold:
-       alert_admin()
-   ```
-
----
-
-## 🔍 Querying Examples
+### Interactive Mode
 
 ```python
-# Get all actions for a workflow
-trail = audit_mgr.get_audit_trail(workflow_id="wf_123")
+from src.workflow.chat_based_workflow import ChatBasedWorkflow
+import asyncio
 
-# Get all errors in last 48 hours
-errors = audit_mgr.get_recent_errors(hours=48)
+async def chat():
+    workflow = ChatBasedWorkflow()
+    
+    while True:
+        user_input = input("YOU: ")
+        if user_input == "quit":
+            break
+        
+        response = await workflow.process_message(user_input)
+        print(f"ASSISTANT: {response}\n")
 
-# Get specific agent metrics
-agent_metrics = audit_mgr.get_agent_metrics("DataAnalyst")
-
-# Get execution summary
-summary = audit_mgr.get_execution_summary("exec_1")
-
-# Export data
-audit_mgr.export_data("audit_export.json")
+asyncio.run(chat())
 ```
 
----
+## 🎨 Advanced Usage
 
-## 📊 Performance
+### Custom Sequence Validation
 
-- **Database Size**: ~1KB per audit entry
-- **Query Speed**: <100ms for typical queries
-- **Throughput**: 1000+ audits/second
-- **Memory**: Minimal overhead with TinyDB
-- **Concurrency**: Thread-safe with locks
+```python
+evaluator = SequenceEvaluatorAgent()
 
----
+# Generate sequence
+result = await evaluator.evaluate_sequence(task)
 
-## 🚀 Deployment
+# Validate
+is_valid, errors = evaluator.validate_sequence(result['sequence'])
 
-1. **Development**
-   ```bash
-   audit_mgr = TinyDBAuditManager()
-   ```
+if not is_valid:
+    print(f"Sequence has errors: {errors}")
+```
 
-2. **Production**
-   ```bash
-   # Use persistent volume for audit_logs/
-   audit_mgr = TinyDBAuditManager(db_path="/data/audit_logs")
-   ```
+### Context Management
 
-3. **Monitoring**
-   ```bash
-   # Run UI on separate port
-   streamlit run admin_monitor_ui.py --server.port 8501
-   ```
+```python
+workflow = ChatBasedWorkflow()
 
-4. **Backup**
-   ```bash
-   audit_mgr.export_data(f"/backups/audit_{date}.json")
-   ```
+# Add context before task
+workflow.state.context = {
+    "user_name": "Alice",
+    "default_csv": "sales.csv",
+    "preferences": {"format": "detailed"}
+}
 
----
+# Task will use this context
+response = await workflow.process_message("Analyze the default file")
+```
 
-**Status: Production Ready** ✅
+### Step-by-Step Execution
 
-*Last Updated: November 27, 2024*
+```python
+# Generate sequence but don't execute
+evaluation = await workflow.evalu
